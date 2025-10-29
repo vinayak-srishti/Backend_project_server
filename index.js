@@ -26,5 +26,5 @@ app.get('/', (req, res) => {
 
 const port = process.env.PORT || 4048;
 app.listen(port, () => {
-  console.log(`Server created successfully at ${port}`);
+  console.log(`Server running successfully at ${port}`);
 });
