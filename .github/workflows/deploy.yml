@@ -85,10 +85,10 @@ jobs:
             chmod 600 .env
             
             # Stop and remove existing containers
-            docker compose -f docker-compose.prod.yml down || true
+            docker compose -f docker-compose-prod.yml down || true
             
             # Build and start containers
-            if docker compose -f docker-compose.prod.yml up -d --build; then
+            if docker compose -f docker-compose-prod.yml up -d --build; then
               echo "Containers started successfully"
               
               # Wait for services to become healthy
@@ -124,7 +124,7 @@ jobs:
               
               # Rollback procedure
               cd /var/www/python.sicsglobal.com/judicial_backend
-              docker compose -f current/docker-compose.prod.yml down || true
+              docker compose -f current/docker-compose-prod.yml down || true
               
               LATEST_BACKUP=$(ls -t backups/ | head -1)
               LATEST_MONGO_BACKUP=$(ls -t mongo_backups/ | head -1)
@@ -136,13 +136,13 @@ jobs:
                 
                 if [ -n "$LATEST_MONGO_BACKUP" ]; then
                   echo "Restoring MongoDB from backup: $LATEST_MONGO_BACKUP"
-                  docker compose -f current/docker-compose.prod.yml up -d mongo
+                  docker compose -f current/docker-compose-prod.yml up -d mongo
                   sleep 10
                   docker exec -i judicial_mongo_prod mongorestore --archive --gzip --drop < mongo_backups/$LATEST_MONGO_BACKUP
                 fi
                 
                 cd current
-                docker compose -f docker-compose.prod.yml up -d
+                docker compose -f docker-compose-prod.yml up -d
                 
                 # Verify rollback
                 if curl --max-time 10 --fail http://localhost:4048/; then
